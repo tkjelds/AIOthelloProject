@@ -1,14 +1,11 @@
 public class MiniMaxAlphaBeta implements IOthelloAI {
 
-    public int numberOfValueCalls = 0;
-
     @Override
     public Position decideMove(GameState s) {
        return MiniMaxSearch(s, 6);
     }
 
     public Position MiniMaxSearch(GameState gs, int maxDepth){
-        System.out.println("-------- New Turn --------");
         Position move;
         var search = MaxValue(gs, Integer.MIN_VALUE,Integer.MAX_VALUE, maxDepth,0);
         move = search.move;
