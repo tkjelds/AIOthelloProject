@@ -4,10 +4,10 @@ public class MiniMaxAlphaBeta implements IOthelloAI {
 
     @Override
     public Position decideMove(GameState s) {
-       return miniMaxSearch(s, 10);
+       return MiniMaxSearch(s, 7);
     }
 
-    public Position miniMaxSearch(GameState gs, int maxDepth){
+    public Position MiniMaxSearch(GameState gs, int maxDepth){
         numberOfValueCalls = 0;
         Position move;
         var search = MaxValue(gs, Integer.MIN_VALUE,Integer.MAX_VALUE, maxDepth,0);
@@ -23,10 +23,8 @@ public class MiniMaxAlphaBeta implements IOthelloAI {
         var legalMoves = gs.legalMoves();
         int value = Integer.MIN_VALUE;
         Position move = null;
-        for (Position a : legalMoves) {
-            var tempGS = new GameState(gs.getBoard(), gs.getPlayerInTurn());
-            tempGS.insertToken(a);      
-            var v2a2 = MinValue(tempGS, alpha , beta , maxDepth , (currentDepth + 1));
+        for (Position a : legalMoves) {      
+            var v2a2 = MinValue(Result(gs, a), alpha , beta , maxDepth , (currentDepth + 1));
             if (v2a2.value > value) {
                 value = v2a2.value;
                 move = a;
@@ -45,9 +43,7 @@ public class MiniMaxAlphaBeta implements IOthelloAI {
         int value = Integer.MAX_VALUE;
         Position move = null;
         for (Position a : legalMoves) {
-            var tempGS = new GameState(gs.getBoard(), gs.getPlayerInTurn());
-            tempGS.insertToken(a);
-            var v2a2 = MaxValue(tempGS, alpha , beta , maxDepth , (currentDepth + 1));
+            var v2a2 = MaxValue(Result(gs, a), alpha , beta , maxDepth , (currentDepth + 1));
             if (v2a2.value < value) {
                 value = v2a2.value;
                 move = a;
@@ -60,6 +56,12 @@ public class MiniMaxAlphaBeta implements IOthelloAI {
 
     private int Utility(GameState gs){
         return gs.countTokens()[0];
+    }
+
+    private GameState Result(GameState gs, Position a){
+        var tempGS = new GameState(gs.getBoard(), gs.getPlayerInTurn());
+        tempGS.insertToken(a);
+        return tempGS;
     }
     
 }
