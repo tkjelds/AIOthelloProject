@@ -1,6 +1,5 @@
 public class MiniMax implements IOthelloAI {
 
-    public int numberOfValueCalls = 0;
 
     @Override
     public Position decideMove(GameState s) {
@@ -8,16 +7,15 @@ public class MiniMax implements IOthelloAI {
     }
 
     public Position miniMaxSearch(GameState gs, int maxDepth){
-        numberOfValueCalls = 0;
+        System.out.println("New Turn");
         Position move;
         var search = MaxValue(gs,maxDepth,0);
         move = search.move;
-        System.out.println(numberOfValueCalls);
+        if (move == null) return new Position(-1, -1);
         return move;
     }
 
     private Pair MaxValue(GameState gs, int maxDepth, int currentDepth) {
-        numberOfValueCalls = 0;
         if (gs.isFinished()) return new Pair(Utility(gs), null);
         if (currentDepth >= maxDepth ) return new Pair(Utility(gs), null);
         var legalMoves = gs.legalMoves();
@@ -32,11 +30,11 @@ public class MiniMax implements IOthelloAI {
                 move = a;
             }
         }
+        System.out.println(move);
         return new Pair(value, move);
     }
 
     private Pair MinValue(GameState gs, int maxDepth, int currentDepth) {
-        numberOfValueCalls = 0;
         if (gs.isFinished()) return new Pair(Utility(gs), null);
         if (currentDepth >= maxDepth ) return new Pair(Utility(gs), null);
         var legalMoves = gs.legalMoves();
@@ -55,7 +53,7 @@ public class MiniMax implements IOthelloAI {
     }
 
     private int Utility(GameState gs){
-        return gs.countTokens()[0];
+        return gs.countTokens()[1];
     }
     
 }

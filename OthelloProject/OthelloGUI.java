@@ -146,7 +146,6 @@ public class OthelloGUI extends JComponent implements MouseListener
 				return ai1.decideMove(state);
 		}
     }
-
     /**
      * Display message for when an illegal move has been attempted 
      */

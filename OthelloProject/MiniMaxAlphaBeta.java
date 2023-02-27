@@ -4,25 +4,24 @@ public class MiniMaxAlphaBeta implements IOthelloAI {
 
     @Override
     public Position decideMove(GameState s) {
-       return MiniMaxSearch(s, 7);
+       return MiniMaxSearch(s, 6);
     }
 
     public Position MiniMaxSearch(GameState gs, int maxDepth){
-        numberOfValueCalls = 0;
+        System.out.println("-------- New Turn --------");
         Position move;
         var search = MaxValue(gs, Integer.MIN_VALUE,Integer.MAX_VALUE, maxDepth,0);
         move = search.move;
-        System.out.println(numberOfValueCalls);
         return move;
     }
 
-    private Pair MaxValue(GameState gs,int alpha, int beta, int maxDepth, int currentDepth) {
-        numberOfValueCalls++;
+    private Pair MaxValue(GameState gs, int alpha, int beta, int maxDepth, int currentDepth) {
         if (gs.isFinished()) return new Pair(Utility(gs), null);
         if (currentDepth >= maxDepth ) return new Pair(Utility(gs), null);
-        var legalMoves = gs.legalMoves();
         int value = Integer.MIN_VALUE;
-        Position move = null;
+        var legalMoves = gs.legalMoves();
+        if(legalMoves.isEmpty()) return new Pair(Utility(gs), null);
+        Position move = legalMoves.get(0);
         for (Position a : legalMoves) {      
             var v2a2 = MinValue(Result(gs, a), alpha , beta , maxDepth , (currentDepth + 1));
             if (v2a2.value > value) {
@@ -36,12 +35,12 @@ public class MiniMaxAlphaBeta implements IOthelloAI {
     }
 
     private Pair MinValue(GameState gs, int alpha, int beta, int maxDepth, int currentDepth) {
-        numberOfValueCalls++;
         if (gs.isFinished()) return new Pair(Utility(gs), null);
         if (currentDepth >= maxDepth ) return new Pair(Utility(gs), null);
-        var legalMoves = gs.legalMoves();
         int value = Integer.MAX_VALUE;
-        Position move = null;
+        var legalMoves = gs.legalMoves();
+        if(legalMoves.isEmpty()) return new Pair(Utility(gs), null);
+        Position move = legalMoves.get(0);
         for (Position a : legalMoves) {
             var v2a2 = MaxValue(Result(gs, a), alpha , beta , maxDepth , (currentDepth + 1));
             if (v2a2.value < value) {
