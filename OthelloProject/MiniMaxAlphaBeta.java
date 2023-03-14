@@ -1,8 +1,10 @@
+import java.util.ArrayList;
+
 public class MiniMaxAlphaBeta implements IOthelloAI {
 
     @Override
     public Position decideMove(GameState s) {
-       return MiniMaxSearch(s, 6);
+       return MiniMaxSearch(s, 5);
     }
 
     public Position MiniMaxSearch(GameState gs, int maxDepth){
@@ -50,15 +52,69 @@ public class MiniMaxAlphaBeta implements IOthelloAI {
         return new Pair(value, move);
     }
 
-    private int Utility(GameState gs){
-        return gs.countTokens()[0];
+
+
+    private Boolean isCorner(Position pos, int boardSize){
+        int row = pos.row;
+        int col = pos.col;
+
+        if(row == 0 && col == 0) return true;
+
+        if(row == boardSize && col == boardSize) return true;
+
+        if(row == 0 && col == boardSize) return true;
+
+        if (row == boardSize && col == 0) return true;
+
+        return false;
     }
+
+    private Boolean isNextToCorner(Position pos, int bs){
+        ArrayList<Position> nextToCornerPositions = new ArrayList<>();  
+
+        nextToCornerPositions.add(new Position(1, 1));
+        nextToCornerPositions.add(new Position(0, 1));
+        nextToCornerPositions.add(new Position(1, 0));
+        nextToCornerPositions.add(new Position((bs-1), 0));
+        nextToCornerPositions.add(new Position((bs-1), (bs+1)));
+        nextToCornerPositions.add(new Position((bs), 1));
+        nextToCornerPositions.add(new Position(0, (bs-1)));
+        nextToCornerPositions.add(new Position(1, (bs-1)));
+        nextToCornerPositions.add(new Position(1, bs));
+        nextToCornerPositions.add(new Position((bs-1), (bs-1)));
+        nextToCornerPositions.add(new Position((bs-1), bs));
+        nextToCornerPositions.add(new Position(bs, (bs-1)));
+        return nextToCornerPositions.contains(pos); 
+    }
+    
+    private int CalculatePositionValue(Position pos, int bs){
+        if (isCorner(pos , bs)) return 10;
+        if (isNextToCorner(pos, bs)) return -4;
+        return 1;
+    }
+
+
+
+    private int Utility(GameState gs){
+        int bs = gs.getBoard().length;
+        var util = 0;
+        for(int col = 0; col < bs; col++){
+            for (int row = 0; row < bs; row++) {
+                if(gs.getBoard()[col][row] == 0) util += CalculatePositionValue(new Position(col, row), bs);
+            }
+        }
+        return util;
+    }
+
+
 
     private GameState Result(GameState gs, Position a){
         var tempGS = new GameState(gs.getBoard(), gs.getPlayerInTurn());
         tempGS.insertToken(a);
         return tempGS;
     }
+
+    
     
 }
 
