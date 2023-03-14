@@ -3,7 +3,7 @@ public class MiniMax implements IOthelloAI {
 
     @Override
     public Position decideMove(GameState s) {
-       return miniMaxSearch(s, 3);
+       return miniMaxSearch(s, 4);
     }
 
     public Position miniMaxSearch(GameState gs, int maxDepth){

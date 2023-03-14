@@ -20,7 +20,7 @@ public class MiniMaxAlphaBeta implements IOthelloAI {
         int value = Integer.MIN_VALUE;
         var legalMoves = gs.legalMoves();
         if(legalMoves.isEmpty()) return new Pair(Utility(gs), null);
-        Position move = legalMoves.get(0);
+        Position move = null;
         for (Position a : legalMoves) {      
             var v2a2 = MinValue(Result(gs, a), alpha , beta , maxDepth , (currentDepth + 1));
             if (v2a2.value > value) {
@@ -39,7 +39,7 @@ public class MiniMaxAlphaBeta implements IOthelloAI {
         int value = Integer.MAX_VALUE;
         var legalMoves = gs.legalMoves();
         if(legalMoves.isEmpty()) return new Pair(Utility(gs), null);
-        Position move = legalMoves.get(0);
+        Position move = null;
         for (Position a : legalMoves) {
             var v2a2 = MaxValue(Result(gs, a), alpha , beta , maxDepth , (currentDepth + 1));
             if (v2a2.value < value) {
@@ -110,7 +110,7 @@ public class MiniMaxAlphaBeta implements IOthelloAI {
         var util = 0;
         for(int col = 0; col < bs; col++){
             for (int row = 0; row < bs; row++) {
-                if(gs.getBoard()[col][row] == 1) util += CalculatePositionValue(new Position(col, row), bs-1);
+                if(gs.getBoard()[col][row] == 2) util += CalculatePositionValue(new Position(col, row), bs-1);
             }
         }
         return util;
