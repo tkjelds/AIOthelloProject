@@ -15,11 +15,13 @@ public class MiniMaxAlphaBeta implements IOthelloAI {
     }
 
     private Pair MaxValue(GameState gs, int alpha, int beta, int maxDepth, int currentDepth) {
+        // Early termination clauses. they just return the utility of the gamestate
         if (gs.isFinished()) return new Pair(Utility(gs), null);
         if (currentDepth >= maxDepth ) return new Pair(Utility(gs), null);
-        int value = Integer.MIN_VALUE;
         var legalMoves = gs.legalMoves();
         if(legalMoves.isEmpty()) return new Pair(Utility(gs), null);
+        
+        int value = Integer.MIN_VALUE;
         Position move = null;
         for (Position a : legalMoves) {      
             var v2a2 = MinValue(Result(gs, a), alpha , beta , maxDepth , (currentDepth + 1));
@@ -34,11 +36,13 @@ public class MiniMaxAlphaBeta implements IOthelloAI {
     }
 
     private Pair MinValue(GameState gs, int alpha, int beta, int maxDepth, int currentDepth) {
+        // Early termination clauses. they just return the utility of the gamestate
         if (gs.isFinished()) return new Pair(Utility(gs), null);
         if (currentDepth >= maxDepth ) return new Pair(Utility(gs), null);
-        int value = Integer.MAX_VALUE;
         var legalMoves = gs.legalMoves();
         if(legalMoves.isEmpty()) return new Pair(Utility(gs), null);
+        
+        int value = Integer.MAX_VALUE;
         Position move = null;
         for (Position a : legalMoves) {
             var v2a2 = MaxValue(Result(gs, a), alpha , beta , maxDepth , (currentDepth + 1));
@@ -51,7 +55,6 @@ public class MiniMaxAlphaBeta implements IOthelloAI {
         }
         return new Pair(value, move);
     }
-
 
 
     private Boolean isCorner(Position pos, int boardSize){
@@ -69,25 +72,41 @@ public class MiniMaxAlphaBeta implements IOthelloAI {
         return false;
     }
 
+    /*
+     * Bool representing whether or not a position is next to a corner eg.
+     *   0 1 2 3 
+     * 0 i j 
+     * 1 j j
+     * 3
+     * 
+     * Position i would return false, while j would return true.
+     * 
+     */
     private Boolean isNextToCorner(Position pos, int bs){
-        ArrayList<Position> nextToCornerPositions = new ArrayList<>();  
-
-        nextToCornerPositions.add(new Position(1, 1));
-        nextToCornerPositions.add(new Position(0, 1));
-        nextToCornerPositions.add(new Position(1, 0));
-        nextToCornerPositions.add(new Position((bs-1), 0));
-        nextToCornerPositions.add(new Position((bs-1), (bs+1)));
-        nextToCornerPositions.add(new Position((bs), 1));
-        nextToCornerPositions.add(new Position(0, (bs-1)));
-        nextToCornerPositions.add(new Position(1, (bs-1)));
-        nextToCornerPositions.add(new Position(1, bs));
-        nextToCornerPositions.add(new Position((bs-1), (bs-1)));
-        nextToCornerPositions.add(new Position((bs-1), bs));
-        nextToCornerPositions.add(new Position(bs, (bs-1)));
-
+        ArrayList<Position> nextToCornerPositions = new ArrayList<>()
+        {
+            {
+                add(new Position(1, 1));
+                add(new Position(0, 1));
+                add(new Position(1, 0));
+                add(new Position(1, 1));
+                add(new Position(0, 1));
+                add(new Position(1, 0));
+                add(new Position((bs-1), 0));
+                add(new Position((bs-1), (bs+1)));
+                add(new Position((bs), 1));
+                add(new Position(0, (bs-1)));
+                add(new Position(1, (bs-1)));
+                add(new Position(1, bs));
+                add(new Position((bs-1), (bs-1)));
+                add(new Position((bs-1), bs));
+                add(new Position(bs, (bs-1)));
+            }
+        };  
         return nextToCornerPositions.contains(pos); 
     }
     
+    // Bool, representing whether or not a board piece is on the edge
     private Boolean isBorder(Position pos, int bs){
         int row = pos.row;
         int col = pos.col;
@@ -108,6 +127,11 @@ public class MiniMaxAlphaBeta implements IOthelloAI {
     private int Utility(GameState gs){
         int bs = gs.getBoard().length;
         var util = 0;
+        // Early evaluation, if the game is over and white wins
+        if(gs.isFinished() && (gs.countTokens()[1] > gs.countTokens()[0])) return 1000;
+        // Early evaluation, if the game is over and black wins
+        if(gs.isFinished() && (gs.countTokens()[1] < gs.countTokens()[0])) return -1000;
+        // Summing up the total utility of a board
         for(int col = 0; col < bs; col++){
             for (int row = 0; row < bs; row++) {
                 if(gs.getBoard()[col][row] == 2) util += CalculatePositionValue(new Position(col, row), bs-1);
@@ -117,7 +141,7 @@ public class MiniMaxAlphaBeta implements IOthelloAI {
     }
 
 
-
+    // Helper function to create a new gamestate. Naming was done in compliance with Norvig 2021
     private GameState Result(GameState gs, Position a){
         var tempGS = new GameState(gs.getBoard(), gs.getPlayerInTurn());
         tempGS.insertToken(a);
@@ -125,7 +149,7 @@ public class MiniMaxAlphaBeta implements IOthelloAI {
     }
    
 }
-
+// Class to represent a pair of a Move and the value of the move. The class was inspired by the same notation as in Norvig 2021.
 class Pair{
     Position move;
     int value;
