@@ -116,9 +116,9 @@ public class MiniMaxAlphaBeta implements IOthelloAI {
     }
     
     private int CalculatePositionValue(Position pos, int bs){
-        if (isCorner(pos , bs)) return 4;
+        if (isCorner(pos , bs)) return 10;
         if (isNextToCorner(pos, bs)) return -4;
-        if (isBorder(pos, bs)) return 2;
+        if (isBorder(pos, bs)) return 3;
         return 1;
     }
 
